@@ -1,16 +1,4 @@
-export interface Product {
-  id: string;
-  category: string;
-  name: string;
-  affiliateUrl: string;
-  image: string;
-  originalPrice: string;
-  discountPrice: string;
-}
 
-export const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRZLbaEiyJ-qdZEL5aDliCGwPjwBLsJelGpC2wSZlqgntbBG3ReHcsPB-pSKw68w67Dbe9_D1-vY0A_/pub?output=csv';
-
-export const FALLBACK_CATEGORIES = ['Tất cả', 'Võ phục', 'Gym & Fitness', 'Dụng cụ tập', 'Phụ kiện', 'Bóng đá'];
 export interface Product {
   id: string;
   name: string;
