@@ -1,8 +1,8 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
-import Hero from './components/Hero';
-import ProductCard from './components/ProductCard';
-import Benefits from './components/Benefits';
+import Hero from './Hero';
+import ProductCard from './ProductCard';
+import Benefits from './Benefits';
 import { Product, SHEET_CSV_URL, FALLBACK_CATEGORIES } from './constants';
 
 type SortOption = 'newest' | 'price-asc' | 'price-desc';
