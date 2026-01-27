@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>VovinamStore - Trang Bị Thể Thao & Võ Thuật Chính Hãng</title>
+    
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#005596">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="VovinamStore">
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="VovinamStore - Khám phá bộ sưu tập trang thiết bị thể thao chính hãng, võ phục, dụng cụ tập luyện với giá ưu đãi nhất trên Shopee.">
+    <meta name="keywords" content="vovinamstore, vovinam, thể thao, võ phục, dụng cụ võ thuật, shopee affiliate, vovinam fanclub">
+    <meta name="author" content="Vovinam Fanclub">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="VovinamStore - Deal Thể Thao Ngon Mỗi Ngày">
+    <meta property="og:description" content="Trang thiết bị các môn thể thao chính hãng, giá ưu đãi cho môn sinh và người yêu thể thao.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1552072805-2a9039d00e57?auto=format&fit=crop&q=80&w=1200">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="VovinamStore - Trang Bị Thể Thao Chính Hãng">
+    <meta property="twitter:image" content="https://images.unsplash.com/photo-1552072805-2a9039d00e57?auto=format&fit=crop&q=80&w=1200">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://vovinam-fanclub.vercel.app/favicon.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .shopee-orange { color: #EE4D2D; }
+        .bg-shopee-orange { background-color: #EE4D2D; }
+        .vovinam-blue { color: #005596; }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+        }
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="bg-gray-50 text-gray-900 selection:bg-blue-100 selection:text-blue-900">
+    <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
