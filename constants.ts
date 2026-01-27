@@ -1,13 +1,13 @@
 
 export interface Product {
   id: string;
-  name: string;
-  category: string;
-  image: string;
-  originalPrice: number;
-  discountPrice: number;
-  badge: 'Deal hot' | 'Bán chạy' | 'Giảm sâu' | 'Mới';
-  affiliateUrl: string;
+  name: string;           // Khớp với cột "Tên Sản Phẩm"
+  category: string;       // Khớp với cột "Hạng Mục"
+  image: string;          // Khớp với cột "Ảnh Sản Phẩm"
+  originalPrice: string;  // Dùng string để tránh lỗi định dạng tiền tệ có chữ "đ"
+  discountPrice: string;  // Dùng string để tránh lỗi định dạng tiền tệ có chữ "đ"
+  badge: string;
+  affiliateUrl: string;   // Khớp với cột "AffiliateUrl"
 }
 
 /**
