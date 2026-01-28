@@ -59,17 +59,17 @@ const App: React.FC = () => {
       setLoading(true);
       const response = await fetch(`${SHEET_CSV_URL}&t=${new Date().getTime()}`);
       if (!response.ok) throw new Error('Không thể tải dữ liệu.');
-      
-      const csvText = await response.text();
-      const dataRows = parseCSV(csvText);
-      const contentRows = dataRows.slice(1).filter(row => row.length >= 2 && row[1]);
-      
       const parsedProducts: Product[] = contentRows.map((row, index) => ({
-        id: row[0]?.trim() || `sp-${index}`,
-        name: row[1]?.trim() || 'Sản phẩm đang cập nhật',
-        category: row[2]?.trim() || 'Khác',
-        image: row[3]?.trim() || 'https://images.unsplash.com/photo-1555597673-b21d5c935865',
-        originalPrice: parseInt(row[4]?.toString().replace(/\D/g, '') || '0'),
+  id: row[0]?.trim() || `sp-${index}`,
+  name: row[1]?.trim() || 'Sản phẩm đang cập nhật',
+  category: row[2]?.trim() || 'Khác', 
+  image: row[3]?.trim() || 'https://images.unsplash.com/photo-1555597673-b21d5c935865',
+  originalPrice: parseInt(row[4]?.toString().replace(/\D/g, '') || '0'),
+  discountPrice: parseInt(row[5]?.toString().replace(/\D/g, '') || '0'),
+  badge: (row[6]?.trim() as any) || 'Mới',
+  // SỬA DÒNG NÀY: Đổi từ row[7] thành row[2] vì link Shopee nằm ở cột C
+  affiliateUrl: row[2]?.trim() || 'https://shopee.vn' 
+}));
         discountPrice: parseInt(row[5]?.toString().replace(/\D/g, '') || '0'),
         badge: (row[6]?.trim() as any) || 'Mới',
         affiliateUrl: row[7]?.trim() || 'https://shopee.vn'
