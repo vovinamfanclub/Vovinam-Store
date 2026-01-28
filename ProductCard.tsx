@@ -17,33 +17,36 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     : 0;
 
   return (
-    <div className="group bg-white rounded-2xl md:rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 flex flex-col h-full">
-      <div className="relative aspect-[4/5] overflow-hidden bg-gray-50">
+    <a 
+      href={product.affiliateUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group bg-white rounded-2xl md:rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 flex flex-col h-full relative cursor-pointer"
+    >
+      {/* Image Section */}
+      <div className="relative aspect-[4/5] overflow-hidden bg-gray-50 block">
         <img 
           src={product.image} 
           alt={product.name}
           loading="lazy"
-          className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
           onError={(e) => {
             (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1555597673-b21d5c935865';
           }}
         />
         {discountPercent > 0 && (
-          <div className="absolute top-2 right-2 bg-red-500 text-white text-[9px] font-black px-2 py-1 rounded-md shadow-lg">
+          <div className="absolute top-2 right-2 bg-[#EE4D2D] text-white text-[9px] font-black px-2 py-1 rounded-md shadow-lg z-10">
             -{discountPercent}%
           </div>
         )}
-        <div className="absolute top-2 left-2 bg-blue-600 text-white text-[8px] font-black px-2 py-1 rounded-md uppercase tracking-wider">
-          {product.badge || 'Mới'}
+        <div className="absolute top-2 left-2 bg-[#005596] text-white text-[8px] font-black px-2 py-1 rounded-md uppercase tracking-wider z-10">
+          {product.category}
         </div>
       </div>
       
       <div className="p-3 md:p-5 flex flex-col flex-grow">
         <div className="flex-grow">
-          <span className="text-[8px] md:text-[9px] font-black text-[#005596] uppercase tracking-widest mb-1 block">
-            {product.category}
-          </span>
-          <h3 className="text-xs md:text-sm font-bold text-gray-800 line-clamp-2 mb-3 leading-tight group-hover:text-[#005596] transition-colors">
+          <h3 className="text-xs md:text-sm font-bold text-gray-800 line-clamp-2 mb-3 leading-tight group-hover:text-[#EE4D2D] transition-colors">
             {product.name}
           </h3>
         </div>
@@ -62,23 +65,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </div>
           ) : (
             <div className="mb-4">
-               <span className="text-[10px] text-gray-400 font-bold italic">Giá tốt tại Shopee</span>
+               <span className="text-[10px] text-gray-400 font-bold italic group-hover:text-[#EE4D2D] transition-colors">Xem giá tốt tại Shopee</span>
             </div>
           )}
           
-          <a 
-            href={product.affiliateUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block w-full text-center py-3 bg-gray-900 text-white font-black text-[10px] md:text-xs rounded-xl hover:bg-[#EE4D2D] transition-all transform active:scale-95 uppercase tracking-widest shadow-md hover:shadow-orange-200"
-          >
+          {/* Visual Button - Not an <a> tag to avoid nested links */}
+          <div className="block w-full text-center py-3 bg-gray-900 text-white font-black text-[10px] md:text-xs rounded-xl group-hover:bg-[#EE4D2D] transition-all transform active:scale-95 uppercase tracking-widest shadow-md">
             Mua Ngay
-          </a>
+          </div>
         </div>
       </div>
-    </div>
+    </a>
   );
 };
 
 export default ProductCard;
-
