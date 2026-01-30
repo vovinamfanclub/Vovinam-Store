@@ -1,8 +1,8 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
-import Hero from './Hero';
-import ProductCard from './ProductCard';
-import Benefits from './Benefits';
+import Hero from './components/Hero';
+import ProductCard from './components/ProductCard';
+import Benefits from './components/Benefits';
 import { Product, SHEET_CSV_URL, FALLBACK_CATEGORIES, PRIORITY_CATEGORIES, CATEGORY_ICONS } from './constants';
 
 type SortOption = 'newest' | 'price-asc' | 'price-desc';
@@ -70,8 +70,6 @@ const App: React.FC = () => {
       
       const csvText = await response.text();
       const dataRows = parseCSV(csvText);
-      // Cấu trúc sheet mới của bạn:
-      // A(0): Hạng mục, B(1): Tên SP, C(2): Link Affiliate, D(3): Ảnh Affiliate, E(4): Giá gốc, F(5): Giá ưu đãi
       const contentRows = dataRows.slice(1).filter(row => row[1]?.trim());
       
       const parsedProducts: Product[] = contentRows.map((row, index) => {
@@ -124,86 +122,159 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50/50">
+      {/* Header / Navigation */}
       <nav className="sticky top-0 bg-white/95 backdrop-blur-xl z-50 border-b border-gray-100 shadow-sm transition-all duration-300">
-        <div className="container mx-auto px-4 h-16 md:h-20 flex items-center justify-between gap-4">
-          <div className="flex items-center space-x-3 cursor-pointer shrink-0" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
-            <div className="w-10 h-10 md:w-11 md:h-11 bg-[#005596] rounded-xl flex items-center justify-center text-white font-black shadow-lg shadow-blue-100 text-xl md:text-2xl">V</div>
-            <div className="flex flex-col">
-              <span className="text-lg md:text-xl font-black tracking-tight leading-none uppercase">Vovinam<span className="text-[#EE4D2D]">Store</span></span>
-              <span className="text-[8px] md:text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-1">Trang bị chính hãng</span>
+        <div className="container mx-auto px-2 md:px-4 h-16 md:h-20 flex items-center gap-2 md:gap-4">
+          
+          {/* Logo - Compact Icon Circle for Mobile */}
+          <div 
+            className="flex items-center gap-2 md:gap-3 cursor-pointer shrink-0" 
+            onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}
+          >
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-[#005596] rounded-full flex items-center justify-center text-white font-black shadow-md shadow-blue-100 text-lg md:text-2xl transform active:scale-95 transition-transform">
+              V
+            </div>
+            <div className="hidden sm:flex flex-col">
+              <span className="text-sm md:text-xl font-black tracking-tight leading-none uppercase">
+                Vovinam<span className="text-[#EE4D2D]">Store</span>
+              </span>
+              <span className="text-[8px] md:text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-1">
+                Trang bị chính hãng
+              </span>
             </div>
           </div>
-          <div className="hidden lg:flex flex-grow max-w-lg relative group">
-            <input 
-              type="text" 
-              placeholder="Bạn đang tìm gì..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-gray-50 border-0 rounded-2xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#005596]/10 focus:bg-white transition-all"
-            />
-            <svg className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#005596]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+
+          {/* Search Bar - Optimized for Mobile Header */}
+          <div className="flex-grow relative group min-w-0">
+            <div className="relative flex items-center">
+              <input 
+                type="text" 
+                placeholder="Bạn tìm sản phẩm gì?..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 md:pl-11 pr-9 py-2.5 md:py-3.5 bg-gray-100/80 border-0 rounded-full md:rounded-2xl text-[12px] md:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#005596]/10 focus:bg-white focus:shadow-sm transition-all placeholder:text-gray-400 placeholder:font-medium"
+              />
+              {/* Search Icon */}
+              <svg className="w-4 h-4 md:w-5 md:h-5 absolute left-3 md:left-4 text-gray-400 group-focus-within:text-[#005596] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+              
+              {/* Clear Search Button */}
+              {searchQuery && (
+                <button 
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2 md:right-3 p-1.5 rounded-full bg-gray-200 text-gray-500 hover:bg-gray-300 transition-colors"
+                >
+                  <svg className="w-2.5 h-2.5 md:w-3 md:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+            </div>
           </div>
-          <button onClick={fetchSheetData} className="p-3 text-gray-400 hover:bg-gray-100 rounded-xl transition-all">
-            <svg className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+
+          {/* Refresh Button - Minimalist for Mobile */}
+          <button 
+            onClick={fetchSheetData} 
+            className="p-2 md:p-3 text-gray-400 hover:bg-gray-100 hover:text-[#005596] rounded-full transition-all shrink-0 active:rotate-180 duration-500"
+            title="Làm mới deal"
+          >
+            <svg className={`w-5 h-5 md:w-6 md:h-6 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
           </button>
         </div>
       </nav>
 
       <main className="flex-grow">
         <Hero />
-        <section id="catalog" className="py-12 md:py-20 scroll-mt-20">
+        
+        {/* Catalog Section */}
+        <section id="catalog" className="py-8 md:py-20 scroll-mt-20">
           <div className="container mx-auto px-4">
-            <div className="mb-10 space-y-8">
-              <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+            
+            {/* Catalog Header & Filters */}
+            <div className="mb-8 space-y-6">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                  <h2 className="text-3xl md:text-5xl font-black text-gray-900 uppercase tracking-tight">Sảnh Thể Thao</h2>
-                  <p className="text-gray-400 text-sm font-bold uppercase tracking-widest mt-2 flex items-center">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#005596] mr-2"></span>
-                    Sẵn có {filteredAndSortedProducts.length} deal tốt
+                  <h2 className="text-2xl md:text-5xl font-black text-gray-900 uppercase tracking-tight">Săn Deal Hot</h2>
+                  <p className="text-gray-400 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] mt-2 flex items-center">
+                    <span className="w-2 h-2 rounded-full bg-[#EE4D2D] mr-2 animate-pulse"></span>
+                    Tìm thấy {filteredAndSortedProducts.length} trang bị
                   </p>
                 </div>
-                <select 
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as SortOption)}
-                  className="px-5 py-3.5 bg-white border border-gray-100 rounded-2xl text-xs font-black shadow-sm focus:outline-none cursor-pointer uppercase tracking-widest"
-                >
-                  <option value="newest">🔥 Mới Nhất</option>
-                  <option value="price-asc">💸 Giá: Thấp - Cao</option>
-                  <option value="price-desc">💎 Giá: Cao - Thấp</option>
-                </select>
+                
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] font-black uppercase text-gray-400 hidden md:block">Ưu tiên:</span>
+                  <select 
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as SortOption)}
+                    className="flex-grow md:flex-none px-4 py-3 bg-white border border-gray-100 rounded-xl text-[11px] font-black shadow-sm focus:outline-none focus:ring-2 focus:ring-[#005596]/5 cursor-pointer uppercase tracking-wider"
+                  >
+                    <option value="newest">🔥 Mới Nhất</option>
+                    <option value="price-asc">💸 Giá Tốt Nhất</option>
+                    <option value="price-desc">💎 Cao Cấp</option>
+                  </select>
+                </div>
               </div>
-              <div className="flex items-center space-x-3 overflow-x-auto pb-4 no-scrollbar">
+
+              {/* Categories Scroll */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar -mx-4 px-4">
                 {categories.map(cat => (
                   <button
                     key={cat}
                     onClick={() => setActiveCategory(cat)}
-                    className={`flex items-center space-x-2 px-6 py-4 rounded-2xl text-[10px] md:text-[11px] font-black whitespace-nowrap transition-all border-2 shadow-sm uppercase tracking-widest ${
-                      activeCategory === cat ? 'bg-[#005596] text-white border-[#005596]' : 'bg-white text-gray-500 border-white hover:border-gray-200'
+                    className={`flex items-center gap-2 px-5 py-3.5 rounded-xl text-[10px] md:text-[11px] font-black whitespace-nowrap transition-all border-2 shadow-sm uppercase tracking-widest ${
+                      activeCategory === cat 
+                        ? 'bg-[#005596] text-white border-[#005596] scale-105 z-10' 
+                        : 'bg-white text-gray-500 border-white hover:border-gray-100 hover:bg-gray-50'
                     }`}
                   >
-                    <span>{CATEGORY_ICONS[cat] || '🥋'}</span>
+                    <span className="text-sm">{CATEGORY_ICONS[cat] || '🥋'}</span>
                     <span>{cat}</span>
                   </button>
                 ))}
               </div>
             </div>
 
+            {/* Products Grid */}
             {loading && products.length === 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
                 {[...Array(10)].map((_, i) => <SkeletonCard key={i} />)}
               </div>
+            ) : filteredAndSortedProducts.length > 0 ? (
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 fade-in">
+                {filteredAndSortedProducts.map(product => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 fade-in">
-                {filteredAndSortedProducts.map(product => <ProductCard key={product.id} product={product} />)}
+              <div className="py-20 text-center bg-white rounded-3xl border-2 border-dashed border-gray-100">
+                <div className="text-4xl mb-4">🔍</div>
+                <h3 className="text-lg font-bold text-gray-800">Không có kết quả</h3>
+                <p className="text-gray-400 text-sm mt-1 px-4">Không tìm thấy sản phẩm "{searchQuery}" trong danh mục này.</p>
+                <button 
+                  onClick={() => {setSearchQuery(''); setActiveCategory('Tất cả');}}
+                  className="mt-6 px-6 py-2 bg-gray-900 text-white font-bold rounded-xl hover:bg-black transition-colors uppercase text-[10px] tracking-widest shadow-md"
+                >
+                  Xem tất cả sản phẩm
+                </button>
               </div>
             )}
           </div>
         </section>
+
         <Benefits />
       </main>
 
-      <footer className="bg-white border-t border-gray-100 py-12 text-center">
-        <p className="text-[10px] text-gray-300 font-bold uppercase tracking-[0.4em]">© 2024 VovinamStore</p>
+      <footer className="bg-white border-t border-gray-100 py-10 md:py-16 text-center">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col items-center gap-4">
+             <div className="w-10 h-10 bg-[#005596] rounded-full flex items-center justify-center text-white font-black">V</div>
+             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-[0.4em]">© 2024 VovinamStore • Săn Deal Shopee</p>
+             <p className="text-[9px] text-gray-300 max-w-xs mx-auto leading-relaxed">Kết nối cộng đồng yêu thể thao với những sản phẩm chất lượng và giá tốt nhất từ các gian hàng uy tín.</p>
+          </div>
+        </div>
       </footer>
     </div>
   );
