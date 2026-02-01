@@ -8,7 +8,7 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price).replace('₫', 'đ');
   };
 
   const hasPrice = product.discountPrice > 0;
@@ -21,58 +21,57 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       href={product.affiliateUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="group bg-white rounded-2xl md:rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 flex flex-col h-full relative cursor-pointer"
+      className="group relative flex flex-col w-full cursor-pointer"
     >
-      {/* Image Section */}
-      <div className="relative aspect-[4/5] overflow-hidden bg-gray-50 block">
+      {/* Image Container */}
+      <div className="relative aspect-[3/4] overflow-hidden bg-gray-100 rounded-sm mb-4">
         <img 
           src={product.image} 
           alt={product.name}
           loading="lazy"
-          className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1555597673-b21d5c935865';
-          }}
+          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
         />
+        
+        {/* Overlay Action Button on Mobile/Desktop */}
+        <div className="absolute inset-x-0 bottom-0 p-4 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+           <div className="w-full py-3 bg-white text-black text-[10px] font-black uppercase tracking-widest text-center shadow-2xl">
+              Xem chi tiết
+           </div>
+        </div>
+
+        {/* Badges */}
         {discountPercent > 0 && (
-          <div className="absolute top-2 right-2 bg-[#EE4D2D] text-white text-[9px] font-black px-2 py-1 rounded-md shadow-lg z-10">
+          <div className="absolute top-3 left-3 bg-[#EE4D2D] text-white text-[10px] font-black px-2 py-1 rounded-sm shadow-sm">
             -{discountPercent}%
           </div>
         )}
-        <div className="absolute top-2 left-2 bg-[#005596] text-white text-[8px] font-black px-2 py-1 rounded-md uppercase tracking-wider z-10">
+        <div className="absolute top-3 right-3 bg-black/10 backdrop-blur-md text-white text-[8px] font-bold px-2 py-1 uppercase tracking-widest">
           {product.category}
         </div>
       </div>
       
-      <div className="p-3 md:p-5 flex flex-col flex-grow">
-        <div className="flex-grow">
-          <h3 className="text-xs md:text-sm font-bold text-gray-800 line-clamp-2 mb-3 leading-tight group-hover:text-[#EE4D2D] transition-colors">
-            {product.name}
-          </h3>
-        </div>
+      {/* Product Info */}
+      <div className="flex flex-col px-1">
+        <h3 className="text-[12px] md:text-[13px] font-bold text-gray-900 line-clamp-2 leading-tight mb-2 group-hover:text-[#005596] transition-colors uppercase tracking-tight">
+          {product.name}
+        </h3>
         
-        <div className="mt-auto">
-          {hasPrice ? (
-            <div className="flex flex-col mb-4">
-              {product.originalPrice > product.discountPrice && (
-                <span className="text-[9px] text-gray-400 line-through font-bold mb-0.5">
-                  {formatPrice(product.originalPrice)}
-                </span>
-              )}
-              <span className="text-sm md:text-base font-black text-[#EE4D2D]">
-                {formatPrice(product.discountPrice)}
-              </span>
-            </div>
-          ) : (
-            <div className="mb-4">
-               <span className="text-[10px] text-gray-400 font-bold italic group-hover:text-[#EE4D2D] transition-colors">Xem giá tốt tại Shopee</span>
-            </div>
+        <div className="flex items-center gap-3">
+          <span className="text-[14px] md:text-[16px] font-black text-[#EE4D2D]">
+            {hasPrice ? formatPrice(product.discountPrice) : 'Liên hệ'}
+          </span>
+          {product.originalPrice > product.discountPrice && (
+            <span className="text-[11px] md:text-[12px] text-gray-400 line-through font-medium">
+              {formatPrice(product.originalPrice)}
+            </span>
           )}
-          
-          {/* Visual Button - Not an <a> tag to avoid nested links */}
-          <div className="block w-full text-center py-3 bg-gray-900 text-white font-black text-[10px] md:text-xs rounded-xl group-hover:bg-[#EE4D2D] transition-all transform active:scale-95 uppercase tracking-widest shadow-md">
-            Mua Ngay
-          </div>
+        </div>
+
+        {/* Quick View Tag (Coolmate style) */}
+        <div className="mt-3 flex gap-1">
+           <div className="w-2.5 h-2.5 rounded-full bg-[#005596] border border-gray-200"></div>
+           <div className="w-2.5 h-2.5 rounded-full bg-white border border-gray-200"></div>
+           <div className="w-2.5 h-2.5 rounded-full bg-black border border-gray-200"></div>
         </div>
       </div>
     </a>
