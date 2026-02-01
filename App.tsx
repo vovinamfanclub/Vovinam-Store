@@ -126,7 +126,7 @@ const App: React.FC = () => {
       <nav className="sticky top-0 bg-white/95 backdrop-blur-xl z-50 border-b border-gray-100 shadow-sm transition-all duration-300">
         <div className="container mx-auto px-2 md:px-4 h-16 md:h-20 flex items-center gap-2 md:gap-4">
           
-          {/* Logo - Compact Icon Circle for Mobile */}
+          {/* Logo */}
           <div 
             className="flex items-center gap-2 md:gap-3 cursor-pointer shrink-0" 
             onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}
@@ -144,41 +144,23 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          {/* Search Bar - Optimized for Mobile Header */}
+          {/* Search Bar on Header (Hidden on Mobile home to avoid redundancy with Hero Search, but helpful for scroll) */}
           <div className="flex-grow relative group min-w-0">
             <div className="relative flex items-center">
               <input 
                 type="text" 
-                placeholder="Bạn tìm sản phẩm gì?..." 
+                placeholder="Tìm kiếm..." 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 md:pl-11 pr-9 py-2.5 md:py-3.5 bg-gray-100/80 border-0 rounded-full md:rounded-2xl text-[12px] md:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#005596]/10 focus:bg-white focus:shadow-sm transition-all placeholder:text-gray-400 placeholder:font-medium"
+                className="w-full pl-9 md:pl-11 pr-9 py-2 md:py-3 bg-gray-100/80 border-0 rounded-full md:rounded-2xl text-[12px] md:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#005596]/10 focus:bg-white transition-all"
               />
-              {/* Search Icon */}
-              <svg className="w-4 h-4 md:w-5 md:h-5 absolute left-3 md:left-4 text-gray-400 group-focus-within:text-[#005596] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 md:w-5 md:h-5 absolute left-3 md:left-4 text-gray-400 group-focus-within:text-[#005596]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
               </svg>
-              
-              {/* Clear Search Button */}
-              {searchQuery && (
-                <button 
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-2 md:right-3 p-1.5 rounded-full bg-gray-200 text-gray-500 hover:bg-gray-300 transition-colors"
-                >
-                  <svg className="w-2.5 h-2.5 md:w-3 md:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              )}
             </div>
           </div>
 
-          {/* Refresh Button - Minimalist for Mobile */}
-          <button 
-            onClick={fetchSheetData} 
-            className="p-2 md:p-3 text-gray-400 hover:bg-gray-100 hover:text-[#005596] rounded-full transition-all shrink-0 active:rotate-180 duration-500"
-            title="Làm mới deal"
-          >
+          <button onClick={fetchSheetData} className="p-2 md:p-3 text-gray-400 hover:bg-gray-100 rounded-full transition-all shrink-0">
             <svg className={`w-5 h-5 md:w-6 md:h-6 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
@@ -187,13 +169,10 @@ const App: React.FC = () => {
       </nav>
 
       <main className="flex-grow">
-        <Hero />
+        <Hero searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
         
-        {/* Catalog Section */}
         <section id="catalog" className="py-8 md:py-20 scroll-mt-20">
           <div className="container mx-auto px-4">
-            
-            {/* Catalog Header & Filters */}
             <div className="mb-8 space-y-6">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
@@ -205,7 +184,6 @@ const App: React.FC = () => {
                 </div>
                 
                 <div className="flex items-center gap-3">
-                  <span className="text-[10px] font-black uppercase text-gray-400 hidden md:block">Ưu tiên:</span>
                   <select 
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value as SortOption)}
@@ -218,7 +196,6 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              {/* Categories Scroll */}
               <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar -mx-4 px-4">
                 {categories.map(cat => (
                   <button
@@ -237,7 +214,6 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            {/* Products Grid */}
             {loading && products.length === 0 ? (
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
                 {[...Array(10)].map((_, i) => <SkeletonCard key={i} />)}
@@ -267,12 +243,11 @@ const App: React.FC = () => {
         <Benefits />
       </main>
 
-      <footer className="bg-white border-t border-gray-100 py-10 md:py-16 text-center">
+      <footer className="bg-white border-t border-gray-100 py-10 text-center">
         <div className="container mx-auto px-4">
           <div className="flex flex-col items-center gap-4">
              <div className="w-10 h-10 bg-[#005596] rounded-full flex items-center justify-center text-white font-black">V</div>
              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-[0.4em]">© 2024 VovinamStore • Săn Deal Shopee</p>
-             <p className="text-[9px] text-gray-300 max-w-xs mx-auto leading-relaxed">Kết nối cộng đồng yêu thể thao với những sản phẩm chất lượng và giá tốt nhất từ các gian hàng uy tín.</p>
           </div>
         </div>
       </footer>
