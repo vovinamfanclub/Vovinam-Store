@@ -8,76 +8,86 @@ interface HeroProps {
 
 const Hero: React.FC<HeroProps> = ({ searchQuery, setSearchQuery }) => {
   return (
-    <section className="relative bg-white pt-10 pb-16 md:pt-20 md:pb-24 overflow-hidden border-b border-gray-50">
-      {/* Background Decor */}
-      <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
-        <div className="absolute top-0 left-10 w-64 h-64 bg-[#005596] rounded-full blur-3xl"></div>
-        <div className="absolute bottom-10 right-10 w-96 h-96 bg-orange-200 rounded-full blur-3xl"></div>
+    <section className="relative h-[85vh] min-h-[600px] w-full flex items-center justify-center overflow-hidden bg-gray-900">
+      {/* Background Image - Lifestyle Action */}
+      <div className="absolute inset-0 z-0">
+        <img 
+          src="https://images.unsplash.com/photo-1595152248100-80d407223b9d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" 
+          alt="Sports Hero"
+          className="w-full h-full object-cover opacity-60 scale-105 animate-slow-zoom"
+        />
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
       </div>
 
       <div className="container mx-auto px-4 relative z-10 text-center">
-        {/* Badge moved UP */}
-        <div className="inline-flex items-center space-x-2 bg-blue-50/50 px-4 py-2 rounded-full mb-6 border border-blue-100 shadow-sm animate-bounce-subtle">
-          <span className="text-[#005596] text-[10px] md:text-xs font-black tracking-widest uppercase italic flex items-center">
-            <span className="mr-1.5">✨</span> VOVINAM FANCLUB STORE
+        {/* Top Badge */}
+        <div className="inline-flex items-center gap-3 px-6 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full mb-8 transform hover:scale-105 transition-transform cursor-default">
+          <span className="w-2 h-2 bg-[#EE4D2D] rounded-full animate-ping"></span>
+          <span className="text-white text-[10px] md:text-xs font-black tracking-[0.3em] uppercase italic">
+            VOVINAM FANCLUB STORE
           </span>
         </div>
 
-        {/* New Search Input at the Badge's former position */}
-        <div className="max-w-xl mx-auto mb-10 relative group">
-          <div className="absolute -inset-1 bg-gradient-to-r from-[#005596] to-[#EE4D2D] rounded-2xl blur opacity-15 group-focus-within:opacity-25 transition duration-1000"></div>
-          <div className="relative">
-            <input 
-              type="text" 
-              placeholder="Nhập tên sản phẩm bạn đang tìm..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-12 py-4 md:py-5 bg-white border-2 border-gray-100 rounded-2xl text-sm md:text-base font-bold text-gray-900 focus:outline-none focus:border-[#005596] focus:ring-4 focus:ring-blue-50 transition-all shadow-xl shadow-gray-100/50 placeholder:text-gray-300 placeholder:font-medium"
-            />
-            <svg className="w-5 h-5 md:w-6 md:h-6 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#005596] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-            </svg>
-            {searchQuery && (
-              <button 
-                onClick={() => setSearchQuery('')}
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            )}
+        {/* Dynamic Search Input - Highlight of the page */}
+        <div className="max-w-2xl mx-auto mb-12 relative">
+          <div className="relative group">
+            <div className="absolute -inset-1 bg-white/20 rounded-2xl blur-lg group-focus-within:bg-white/40 transition-all duration-500"></div>
+            <div className="relative flex items-center">
+              <input 
+                type="text" 
+                placeholder="TÌM KIẾM TRANG BỊ BẠN CẦN..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-white/95 backdrop-blur-xl border-0 rounded-2xl px-12 py-5 md:py-6 text-sm md:text-base font-black text-black tracking-widest placeholder:text-gray-400 placeholder:font-bold focus:ring-0 transition-all shadow-2xl"
+              />
+              <svg className="w-5 h-5 md:w-6 md:h-6 absolute left-4 text-[#005596]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+              {searchQuery && (
+                <button 
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-4 p-2 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition-colors"
+                >
+                  <svg className="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+            </div>
           </div>
         </div>
-        
-        <h1 className="text-3xl md:text-7xl font-black text-gray-900 mb-8 leading-[1.1] tracking-tight">
-          Trang Bị Các Môn <br/> 
-          <span className="text-[#005596] relative">
-            Thể Thao Chính Hãng 
-            <svg className="absolute -bottom-2 left-0 w-full h-2 text-orange-400/30" viewBox="0 0 100 10" preserveAspectRatio="none">
-              <path d="M0 5 Q 25 0, 50 5 T 100 5" fill="none" stroke="currentColor" strokeWidth="4" />
-            </svg>
-          </span> 
-          <span className="text-[#EE4D2D]"> - Giá Tốt</span>
+
+        {/* Main Heading */}
+        <h1 className="text-4xl md:text-8xl font-black text-white mb-8 tracking-tighter leading-none uppercase">
+          LỰA CHỌN <br/>
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-orange-400">HOÀN HẢO</span>
         </h1>
         
-        <p className="text-gray-500 text-sm md:text-xl max-w-2xl mx-auto mb-10 font-medium leading-relaxed px-4">
-          Tổng hợp trang thiết bị thể thao, võ phục, dụng cụ tập luyện <br className="hidden md:block"/> 
-          tuyển chọn từ các gian hàng uy tín nhất trên Shopee.
+        <p className="text-gray-200 text-xs md:text-lg max-w-xl mx-auto mb-12 font-bold uppercase tracking-widest leading-relaxed opacity-90">
+          Trang bị chính hãng cho cộng đồng <br className="hidden md:block"/> Vovinam & Thể thao Việt Nam.
         </p>
         
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 px-4">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
           <a 
             href="#catalog"
-            className="w-full sm:w-auto px-10 py-4 md:py-5 bg-[#EE4D2D] text-white font-black text-base md:text-lg rounded-2xl shadow-xl shadow-orange-100 hover:shadow-2xl hover:-translate-y-1 transition-all active:scale-95 uppercase tracking-wider"
+            className="group relative px-12 py-5 bg-white text-black font-black text-xs md:text-sm rounded-full overflow-hidden transition-all hover:pr-14 active:scale-95 shadow-2xl shadow-white/10 uppercase tracking-widest"
           >
-            Xem Deal Hot Ngay
+            <span className="relative z-10">MUA NGAY</span>
+            <svg className="absolute right-6 opacity-0 group-hover:opacity-100 transition-all w-5 h-5 -translate-x-4 group-hover:translate-x-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
           </a>
-          <div className="flex items-center space-x-2 text-gray-400 font-bold text-[10px] md:text-xs uppercase tracking-widest">
-            <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-            <span>Link Sản Phẩm Chính Hãng</span>
-          </div>
+          <button className="text-white/60 text-[10px] md:text-xs font-black uppercase tracking-[0.4em] hover:text-white transition-colors">
+            Khám phá bộ sưu tập mới
+          </button>
         </div>
+      </div>
+      
+      {/* Scroll Indicator */}
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-30 animate-pulse">
+        <span className="text-[8px] text-white font-black uppercase tracking-[0.5em]">Kéo để xem</span>
+        <div className="w-0.5 h-12 bg-white rounded-full"></div>
       </div>
     </section>
   );
