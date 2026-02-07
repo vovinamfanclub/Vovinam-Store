@@ -46,7 +46,8 @@ const Hero: React.FC<HeroProps> = ({ searchQuery, setSearchQuery }) => {
       </div>
 
       <div className="container mx-auto px-6 relative z-10 flex flex-col items-center text-center">
-        <div className="max-w-4xl">
+        {/* Added md:-translate-y-16 to shift content up on desktop only */}
+        <div className="max-w-4xl md:-translate-y-16 transition-transform duration-700">
           <span className="inline-block text-white text-[10px] md:text-xs font-black tracking-[0.4em] uppercase mb-8 border border-white/40 px-6 py-2 rounded-full backdrop-blur-md">
             The Official Vovinam Fanclub Store
           </span>
