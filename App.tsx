@@ -2,23 +2,25 @@ import React, { useState, useMemo, useEffect } from 'react';
 import Hero from './Hero';
 import ProductCard from './ProductCard';
 import Benefits from './Benefits';
-import { Product, SHEET_CSV_URL, FALLBACK_CATEGORIES } from './constants';
+import { Product, SHEET_CSV_URL } from './constants';
 
 type SortOption = 'newest' | 'price-asc' | 'price-desc';
 
 const SkeletonCard = () => (
-  <div className="w-full bg-white rounded-xl p-1.5 space-y-2 shadow-sm border border-gray-100">
-    <div className="aspect-square skeleton rounded-lg"></div>
-    <div className="h-2.5 w-3/4 skeleton rounded"></div>
-    <div className="h-2.5 w-full skeleton rounded"></div>
-    <div className="h-3 w-1/2 skeleton rounded"></div>
-    <div className="h-7 w-full skeleton rounded"></div>
+  <div className="w-full bg-white rounded-xl p-1.5 space-y-2 shadow-sm border border-gray-100 h-[400px]">
+    <div className="flex-1 bg-gray-100 rounded-lg skeleton"></div>
+    <div className="flex-1 p-2 space-y-2">
+      <div className="h-3 w-3/4 skeleton rounded"></div>
+      <div className="h-3 w-full skeleton rounded"></div>
+      <div className="h-4 w-1/2 skeleton rounded"></div>
+      <div className="h-8 w-full skeleton rounded mt-auto"></div>
+    </div>
   </div>
 );
 
 const App: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<string[]>(FALLBACK_CATEGORIES);
+  const [categories, setCategories] = useState<string[]>(['TẤT CẢ']);
   const [activeCategory, setActiveCategory] = useState('TẤT CẢ');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('newest');
@@ -38,12 +40,10 @@ const App: React.FC = () => {
       });
 
       const header = document.querySelector("header");
-      if (header) {
-        if (window.scrollY > 10) {
-          header.classList.add("is-sticky");
-        } else {
-          header.classList.remove("is-sticky");
-        }
+      if (header && window.scrollY > 10) {
+        header.classList.add("is-sticky");
+      } else if (header) {
+        header.classList.remove("is-sticky");
       }
     };
 
@@ -99,7 +99,7 @@ const App: React.FC = () => {
       
       const parsedProducts: Product[] = contentRows.map((row, index) => ({
         id: `sp-${index}`,
-        category: row[0]?.trim()?.toUpperCase() || 'KHÁC',
+        category: row[0]?.trim() || 'KHÁC', 
         name: row[1]?.trim() || 'Sản phẩm',
         affiliateUrl: row[2]?.trim()?.startsWith('http') ? row[2].trim() : `https://${row[2]?.trim() || 'shopee.vn'}`,
         image: fixImageUrl(row[3]),
@@ -109,6 +109,8 @@ const App: React.FC = () => {
       }));
 
       setProducts(parsedProducts);
+      const uniqueCategories = Array.from(new Set(parsedProducts.map(p => p.category)));
+      setCategories(['TẤT CẢ', ...uniqueCategories]);
     } catch (err) {
       console.error(err);
     } finally {
@@ -123,7 +125,7 @@ const App: React.FC = () => {
   const filteredAndSortedProducts = useMemo(() => {
     let result = [...products];
     if (activeCategory !== 'TẤT CẢ') {
-      result = result.filter(p => p.category.includes(activeCategory) || activeCategory.includes(p.category));
+      result = result.filter(p => p.category === activeCategory);
     }
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
@@ -144,7 +146,7 @@ const App: React.FC = () => {
           </div>
 
           <div className="flex-grow max-w-xl relative group">
-             <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
+             <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
              </div>
              <input 
@@ -152,7 +154,7 @@ const App: React.FC = () => {
                placeholder="Tìm kiếm sản phẩm..." 
                value={searchQuery}
                onChange={(e) => setSearchQuery(e.target.value)}
-               className="w-full bg-[#f3f4f6] border-0 rounded-full py-2.5 pl-11 pr-5 text-sm font-medium focus:outline-none focus:ring-1 focus:ring-black focus:bg-white transition-all duration-300"
+               className="w-full bg-[#f3f4f6] border-0 rounded-full py-2.5 pl-11 pr-5 text-sm font-medium focus:outline-none focus:ring-1 focus:ring-[#005596] focus:bg-white transition-all duration-300"
              />
           </div>
 
@@ -175,7 +177,7 @@ const App: React.FC = () => {
                 onClick={() => {setActiveCategory(cat); document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' });}}
                 className={`px-4 py-2 rounded-full text-[10px] font-bold uppercase transition-all duration-300 transform active:scale-95 ${
                   activeCategory === cat 
-                    ? 'bg-black text-white shadow-md' 
+                    ? 'bg-[#005596] text-white shadow-md' 
                     : 'bg-[#f3f4f6] text-gray-600 hover:bg-gray-200'
                 }`}
               >
@@ -196,7 +198,7 @@ const App: React.FC = () => {
                 <h2 className="text-xl md:text-4xl font-black text-gray-900 uppercase tracking-tighter italic leading-none">
                   {activeCategory === 'TẤT CẢ' ? 'DANH MỤC' : activeCategory}
                 </h2>
-                <div className="h-1 w-12 bg-black mt-3"></div>
+                <div className="h-1 w-12 bg-[#005596] mt-3"></div>
               </div>
 
               <div className="flex items-center gap-2 border-b border-black/10 pb-1.5 reveal active">
@@ -214,11 +216,11 @@ const App: React.FC = () => {
             </div>
 
             {loading && products.length === 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
                 {[...Array(15)].map((_, i) => <SkeletonCard key={i} />)}
               </div>
             ) : filteredAndSortedProducts.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
                 {filteredAndSortedProducts.map(product => (
                   <ProductCard key={product.id} product={product} />
                 ))}
@@ -226,7 +228,7 @@ const App: React.FC = () => {
             ) : (
               <div className="py-20 text-center bg-white rounded-2xl reveal active border border-gray-100">
                  <p className="text-gray-400 font-bold uppercase tracking-wider text-xs italic">Không tìm thấy sản phẩm nào phù hợp</p>
-                 <button onClick={() => {setActiveCategory('TẤT CẢ'); setSearchQuery('');}} className="mt-6 px-8 py-3 bg-black text-white font-black uppercase text-[10px] tracking-widest hover:bg-[#005596] transition-all rounded-md shadow-lg">Làm mới bộ lọc</button>
+                 <button onClick={() => {setActiveCategory('TẤT CẢ'); setSearchQuery('');}} className="mt-6 px-8 py-3 bg-[#005596] text-white font-black uppercase text-[10px] tracking-widest hover:bg-[#004172] transition-all rounded-md shadow-lg">Làm mới bộ lọc</button>
               </div>
             )}
           </div>
