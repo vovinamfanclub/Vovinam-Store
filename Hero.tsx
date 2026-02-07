@@ -84,7 +84,9 @@ const Hero: React.FC<HeroProps> = ({ searchQuery, setSearchQuery }) => {
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <a 
-              href="#catalog"
+              href="https://s.shopee.vn/6pv4ROQzcV"
+              target="_blank"
+              rel="noopener noreferrer"
               className="px-16 py-5 bg-[#0052FF] text-white font-black text-sm md:text-base rounded-full hover:bg-[#0041cc] transition-all transform active:scale-95 shadow-xl uppercase tracking-[0.2em] animate-pulse-blue"
             >
               MUA NGAY
