@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Product } from '../constants';
 
@@ -17,66 +16,73 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     : 0;
 
   return (
-    <a 
-      href={product.affiliateUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group product-card relative flex flex-col w-full"
-    >
-      {/* Image Wrapper */}
-      <div className="relative aspect-[3/4] overflow-hidden bg-[#f7f7f7] product-image-container mb-4">
-        <img 
-          src={product.image} 
-          alt={product.name}
-          loading="lazy"
-          className="w-full h-full object-cover"
-        />
-        
-        {/* Quick Buy Overlay (Coolmate Style) */}
-        <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center p-4">
-           <div className="w-full py-3 bg-black text-white text-[10px] font-black uppercase tracking-[0.2em] text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 shadow-xl">
-              Xem sản phẩm
-           </div>
-        </div>
-
-        {/* Floating Tags */}
-        {discountPercent > 0 && (
-          <div className="absolute top-0 left-0 bg-[#EE4D2D] text-white text-[10px] font-black px-3 py-1.5">
-            -{discountPercent}%
+    <div className="reveal h-full">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow duration-300">
+        <a 
+          href={product.affiliateUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group relative flex flex-col w-full flex-grow"
+        >
+          {/* Compact Product Image */}
+          <div className="relative aspect-square overflow-hidden bg-[#f8f8f8] product-image-container">
+            <img 
+              src={product.image} 
+              alt={product.name}
+              loading="lazy"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+            
+            {/* Minimal Badges */}
+            <div className="absolute top-1 left-1 flex flex-col gap-0.5">
+              {product.badge && (
+                <div className="bg-[#00BFFF] text-white text-[7px] md:text-[8px] font-bold px-1 py-0.5 uppercase rounded-sm shadow-sm">
+                  {product.badge}
+                </div>
+              )}
+            </div>
+            
+            {discountPercent > 0 && (
+              <div className="absolute top-1 right-1 bg-[#EE4D2D] text-white text-[8px] md:text-[9px] font-bold px-1 py-0.5 rounded-sm shadow-sm">
+                -{discountPercent}%
+              </div>
+            )}
           </div>
-        )}
-        
-        {product.badge && (
-          <div className="absolute top-0 right-0 bg-white/90 backdrop-blur-sm text-black text-[9px] font-black px-3 py-1.5 uppercase tracking-widest border-b border-l border-gray-100">
-            {product.badge}
+          
+          {/* Compressed Product Information */}
+          <div className="p-1.5 md:p-2 flex flex-col flex-grow">
+            <h3 className="text-[10px] md:text-[12px] font-bold text-gray-800 line-clamp-2 leading-tight mb-1 uppercase tracking-tight h-[2.6em]">
+              {product.name}
+            </h3>
+            
+            <div className="mt-auto flex flex-col gap-0.5">
+              <div className="flex items-baseline gap-1 flex-wrap">
+                <span className="text-[12px] md:text-[14px] font-black text-[#EE4D2D]">
+                  {hasPrice ? formatPrice(product.discountPrice) : 'LIÊN HỆ'}
+                </span>
+                {product.originalPrice > product.discountPrice && (
+                  <span className="text-[9px] md:text-[10px] text-gray-400 line-through font-medium opacity-60">
+                    {formatPrice(product.originalPrice)}
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
-        )}
-      </div>
-      
-      {/* Product Information */}
-      <div className="flex flex-col space-y-2">
-        <div className="flex justify-between items-start gap-2">
-           <span className="text-[10px] text-gray-400 font-black uppercase tracking-widest">
-             {product.category}
-           </span>
-        </div>
+        </a>
         
-        <h3 className="text-[13px] md:text-[14px] font-bold text-gray-900 line-clamp-1 group-hover:text-[#005596] transition-colors uppercase tracking-tight">
-          {product.name}
-        </h3>
-        
-        <div className="flex items-center gap-3 pt-1">
-          <span className="text-[15px] md:text-[17px] font-black text-[#EE4D2D]">
-            {hasPrice ? formatPrice(product.discountPrice) : 'Liên hệ'}
-          </span>
-          {product.originalPrice > product.discountPrice && (
-            <span className="text-[12px] text-gray-400 line-through font-medium opacity-60">
-              {formatPrice(product.originalPrice)}
-            </span>
-          )}
+        {/* Slimmed Down CTA Button */}
+        <div className="px-1.5 pb-2 md:px-2 md:pb-2.5">
+          <a 
+            href={product.affiliateUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full py-1.5 bg-[#0035A0] hover:bg-[#002878] text-white text-[9px] md:text-[10px] font-bold uppercase tracking-wider rounded-md flex items-center justify-center transition-colors shadow-sm"
+          >
+            LẤY VOUCHER
+          </a>
         </div>
       </div>
-    </a>
+    </div>
   );
 };
 
