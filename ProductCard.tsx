@@ -1,5 +1,5 @@
 import React from 'react';
-import { Product } from '../constants';
+import { Product } from './constants';
 
 interface ProductCardProps {
   product: Product;
@@ -22,10 +22,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           href={product.affiliateUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="group relative flex flex-col w-full flex-grow"
+          className="group relative flex flex-col w-full h-full"
         >
-          {/* Compact Product Image */}
-          <div className="relative aspect-square overflow-hidden bg-[#f8f8f8] product-image-container">
+          {/* Top 50% - Image Section */}
+          <div className="relative aspect-square overflow-hidden bg-[#f8f8f8] product-image-container flex-shrink-0">
             <img 
               src={product.image} 
               alt={product.name}
@@ -33,35 +33,36 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
             
-            {/* Minimal Badges */}
-            <div className="absolute top-1 left-1 flex flex-col gap-0.5">
-              {product.badge && (
-                <div className="bg-[#00BFFF] text-white text-[7px] md:text-[8px] font-bold px-1 py-0.5 uppercase rounded-sm shadow-sm">
-                  {product.badge}
-                </div>
-              )}
+            {/* BEST SELLER Badge - Blue background */}
+            <div className="absolute top-0 left-0 bg-[#005596] text-white text-[7px] md:text-[9px] font-black px-2 py-1 uppercase rounded-br-md shadow-sm z-10">
+              BEST SELLER
             </div>
             
+            {/* Discount Percent */}
             {discountPercent > 0 && (
-              <div className="absolute top-1 right-1 bg-[#EE4D2D] text-white text-[8px] md:text-[9px] font-bold px-1 py-0.5 rounded-sm shadow-sm">
+              <div className="absolute top-1 right-1 bg-yellow-400 text-black text-[8px] md:text-[10px] font-black px-1.5 py-0.5 rounded-sm shadow-sm">
                 -{discountPercent}%
               </div>
             )}
           </div>
           
-          {/* Compressed Product Information */}
-          <div className="p-1.5 md:p-2 flex flex-col flex-grow">
-            <h3 className="text-[10px] md:text-[12px] font-bold text-gray-800 line-clamp-2 leading-tight mb-1 uppercase tracking-tight h-[2.6em]">
+          {/* Bottom 50% - Information Section */}
+          <div className="p-2 md:p-3 flex flex-col flex-grow bg-white border-t border-gray-50">
+            <h3 className="text-[10px] md:text-[12px] font-bold text-gray-800 line-clamp-2 leading-tight mb-2 uppercase tracking-tight h-[2.6em]">
               {product.name}
             </h3>
             
-            <div className="mt-auto flex flex-col gap-0.5">
-              <div className="flex items-baseline gap-1 flex-wrap">
-                <span className="text-[12px] md:text-[14px] font-black text-[#EE4D2D]">
+            <p className="text-[8px] md:text-[10px] text-gray-400 italic mb-2 line-clamp-1 opacity-70">
+              Sản phẩm chất lượng cao cho tập luyện...
+            </p>
+            
+            <div className="mt-auto">
+              <div className="flex items-baseline gap-1.5 flex-wrap">
+                <span className="text-[13px] md:text-[15px] font-black text-[#EE4D2D]">
                   {hasPrice ? formatPrice(product.discountPrice) : 'LIÊN HỆ'}
                 </span>
                 {product.originalPrice > product.discountPrice && (
-                  <span className="text-[9px] md:text-[10px] text-gray-400 line-through font-medium opacity-60">
+                  <span className="text-[9px] md:text-[10px] text-gray-400 line-through font-medium opacity-50">
                     {formatPrice(product.originalPrice)}
                   </span>
                 )}
@@ -70,15 +71,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </div>
         </a>
         
-        {/* Slimmed Down CTA Button */}
-        <div className="px-1.5 pb-2 md:px-2 md:pb-2.5">
+        {/* Blue CTA Button - Updated from Red to Blue per request */}
+        <div className="px-2 pb-3">
           <a 
             href={product.affiliateUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full py-1.5 bg-[#0035A0] hover:bg-[#002878] text-white text-[9px] md:text-[10px] font-bold uppercase tracking-wider rounded-md flex items-center justify-center transition-colors shadow-sm"
+            className="w-full py-2 bg-[#005596] hover:bg-[#004172] text-white text-[9px] md:text-[11px] font-bold uppercase tracking-wider rounded-md flex items-center justify-center transition-colors shadow-sm"
           >
-            LẤY VOUCHER
+            LẤY VOUCHER ƯU ĐÃI
           </a>
         </div>
       </div>
