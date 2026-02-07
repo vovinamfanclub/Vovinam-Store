@@ -1,28 +1,56 @@
-
 import React, { useState, useMemo, useEffect } from 'react';
-import Hero from './Hero';
-import ProductCard from './ProductCard';
-import Benefits from './Benefits';
-import { Product, SHEET_CSV_URL, FALLBACK_CATEGORIES, PRIORITY_CATEGORIES, CATEGORY_ICONS } from './constants';
+import Hero from './components/Hero';
+import ProductCard from './components/ProductCard';
+import Benefits from './components/Benefits';
+import { Product, SHEET_CSV_URL, FALLBACK_CATEGORIES } from './constants';
 
 type SortOption = 'newest' | 'price-asc' | 'price-desc';
 
 const SkeletonCard = () => (
-  <div className="w-full space-y-4">
-    <div className="aspect-[3/4] skeleton"></div>
-    <div className="h-4 w-1/4 skeleton rounded"></div>
-    <div className="h-5 w-3/4 skeleton rounded"></div>
-    <div className="h-6 w-1/2 skeleton rounded"></div>
+  <div className="w-full bg-white rounded-xl p-1.5 space-y-2 shadow-sm border border-gray-100">
+    <div className="aspect-square skeleton rounded-lg"></div>
+    <div className="h-2.5 w-3/4 skeleton rounded"></div>
+    <div className="h-2.5 w-full skeleton rounded"></div>
+    <div className="h-3 w-1/2 skeleton rounded"></div>
+    <div className="h-7 w-full skeleton rounded"></div>
   </div>
 );
 
 const App: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>(FALLBACK_CATEGORIES);
-  const [activeCategory, setActiveCategory] = useState('Tất cả');
+  const [activeCategory, setActiveCategory] = useState('TẤT CẢ');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('newest');
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const reveals = document.querySelectorAll(".reveal");
+      const windowHeight = window.innerHeight;
+      const revealPoint = 100;
+
+      reveals.forEach((el) => {
+        const revealTop = el.getBoundingClientRect().top;
+        if (revealTop < windowHeight - revealPoint) {
+          el.classList.add("active");
+        }
+      });
+
+      const header = document.querySelector("header");
+      if (header) {
+        if (window.scrollY > 10) {
+          header.classList.add("is-sticky");
+        } else {
+          header.classList.remove("is-sticky");
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    setTimeout(handleScroll, 100); 
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [loading, products, activeCategory, searchQuery]);
 
   const fixImageUrl = (url: string) => {
     if (!url) return 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438';
@@ -71,20 +99,16 @@ const App: React.FC = () => {
       
       const parsedProducts: Product[] = contentRows.map((row, index) => ({
         id: `sp-${index}`,
-        category: row[0]?.trim() || 'Khác',
+        category: row[0]?.trim()?.toUpperCase() || 'KHÁC',
         name: row[1]?.trim() || 'Sản phẩm',
         affiliateUrl: row[2]?.trim()?.startsWith('http') ? row[2].trim() : `https://${row[2]?.trim() || 'shopee.vn'}`,
         image: fixImageUrl(row[3]),
         originalPrice: parseInt(row[4]?.toString().replace(/\D/g, '') || '0'),
         discountPrice: parseInt(row[5]?.toString().replace(/\D/g, '') || '0'),
-        badge: 'Mới'
+        badge: (row[6] as any) || 'Mới'
       }));
 
       setProducts(parsedProducts);
-      const uniqueSheetCats = [...new Set(parsedProducts.map(p => p.category))];
-      const priorityInSheet = PRIORITY_CATEGORIES.filter(cat => uniqueSheetCats.includes(cat));
-      const remainingCats = uniqueSheetCats.filter(cat => !PRIORITY_CATEGORIES.includes(cat)).sort((a, b) => a.localeCompare(b, 'vi'));
-      setCategories(['Tất cả', ...priorityInSheet, ...remainingCats]);
     } catch (err) {
       console.error(err);
     } finally {
@@ -98,7 +122,9 @@ const App: React.FC = () => {
 
   const filteredAndSortedProducts = useMemo(() => {
     let result = [...products];
-    if (activeCategory !== 'Tất cả') result = result.filter(p => p.category === activeCategory);
+    if (activeCategory !== 'TẤT CẢ') {
+      result = result.filter(p => p.category.includes(activeCategory) || activeCategory.includes(p.category));
+    }
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       result = result.filter(p => p.name.toLowerCase().includes(query));
@@ -109,85 +135,98 @@ const App: React.FC = () => {
   }, [activeCategory, searchQuery, sortBy, products]);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Coolmate-style Minimal Header */}
-      <nav className="sticky top-0 bg-white/95 backdrop-blur-xl z-50 border-b border-gray-100 h-16 md:h-20 flex items-center">
-        <div className="container mx-auto px-6 flex items-center justify-between">
-          <div className="flex items-center gap-12">
-            {/* Logo */}
-            <div className="cursor-pointer" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
-              <span className="text-xl font-black tracking-tighter uppercase">VOVINAM<span className="text-[#EE4D2D]">STORE</span></span>
-            </div>
-            
-            {/* Nav Menu Desktop */}
-            <div className="hidden lg:flex items-center gap-8">
-               {['MỚI', 'BÁN CHẠY', 'SALE'].map(link => (
-                 <button key={link} className={`text-[11px] font-black uppercase tracking-[0.2em] hover:text-[#005596] transition-colors ${link === 'SALE' ? 'text-[#EE4D2D]' : ''}`}>
-                   {link}
-                 </button>
-               ))}
-            </div>
+    <div className="min-h-screen flex flex-col bg-white">
+      <header className="sticky top-0 z-[110] bg-white/95 backdrop-blur-md border-b border-gray-100 transition-all duration-300">
+        <div className="container mx-auto px-4 h-16 md:h-20 flex items-center justify-between gap-4">
+          <div className="shrink-0 cursor-pointer flex items-center gap-2 group" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
+            <div className="w-10 h-10 bg-black rounded flex items-center justify-center text-white font-black text-xl group-hover:bg-[#005596] transition-colors">V</div>
+            <span className="hidden sm:inline font-black tracking-tighter text-lg uppercase">VOVINAM<span className="text-[#005596]">STORE</span></span>
           </div>
 
-          <div className="flex items-center gap-6">
-            <button className="hidden md:block p-2 text-gray-400 hover:text-black transition-colors">
-               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-            </button>
-            <button className="p-2 text-gray-400 hover:text-black transition-colors relative">
-               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
-               <span className="absolute top-1 right-1 w-4 h-4 bg-black text-white text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
-            </button>
-            <button onClick={fetchSheetData} className="p-2 text-gray-400 hover:text-black transition-all">
-               <svg className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+          <div className="flex-grow max-w-xl relative group">
+             <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+             </div>
+             <input 
+               type="text" 
+               placeholder="Tìm kiếm sản phẩm..." 
+               value={searchQuery}
+               onChange={(e) => setSearchQuery(e.target.value)}
+               className="w-full bg-[#f3f4f6] border-0 rounded-full py-2.5 pl-11 pr-5 text-sm font-medium focus:outline-none focus:ring-1 focus:ring-black focus:bg-white transition-all duration-300"
+             />
+          </div>
+
+          <div className="flex items-center gap-2 md:gap-5 shrink-0">
+            <button className="hidden sm:flex p-2 text-gray-800 hover:text-[#005596] transition-colors"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg></button>
+            <button className="p-2 text-gray-800 hover:text-[#005596] transition-colors relative">
+               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+               <span className="absolute top-1.5 right-1 w-4 h-4 bg-[#EE4D2D] text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow-sm">0</span>
             </button>
           </div>
         </div>
-      </nav>
+      </header>
+
+      <div className="sticky top-16 md:top-20 z-[100] bg-white/95 backdrop-blur-sm border-b border-gray-100 py-3 overflow-hidden">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar whitespace-nowrap">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => {setActiveCategory(cat); document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' });}}
+                className={`px-4 py-2 rounded-full text-[10px] font-bold uppercase transition-all duration-300 transform active:scale-95 ${
+                  activeCategory === cat 
+                    ? 'bg-black text-white shadow-md' 
+                    : 'bg-[#f3f4f6] text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
 
       <main>
         <Hero searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
         
-        {/* Catalog Content */}
-        <section id="catalog" className="py-20 md:py-32">
-          <div className="container mx-auto px-6">
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
-              <div>
-                <h2 className="text-4xl md:text-6xl font-black text-gray-900 uppercase tracking-tighter mb-4">Danh mục</h2>
-                <div className="flex flex-wrap gap-2">
-                  {categories.map(cat => (
-                    <button
-                      key={cat}
-                      onClick={() => setActiveCategory(cat)}
-                      className={`px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
-                        activeCategory === cat ? 'bg-black text-white' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
-                      }`}
-                    >
-                      {cat}
-                    </button>
-                  ))}
-                </div>
+        <section id="catalog" className="py-8 md:py-16 scroll-mt-40 bg-gray-50/50">
+          <div className="container mx-auto px-2 md:px-4">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+              <div className="reveal active">
+                <h2 className="text-xl md:text-4xl font-black text-gray-900 uppercase tracking-tighter italic leading-none">
+                  {activeCategory === 'TẤT CẢ' ? 'DANH MỤC' : activeCategory}
+                </h2>
+                <div className="h-1 w-12 bg-black mt-3"></div>
               </div>
-              
-              <select 
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className="bg-transparent border-b-2 border-black py-2 text-xs font-black uppercase tracking-widest focus:outline-none"
-              >
-                <option value="newest">Sản phẩm mới</option>
-                <option value="price-asc">Giá thấp đến cao</option>
-                <option value="price-desc">Giá cao đến thấp</option>
-              </select>
+
+              <div className="flex items-center gap-2 border-b border-black/10 pb-1.5 reveal active">
+                <span className="text-[8px] md:text-[9px] font-black uppercase text-gray-400 tracking-wider">Sắp xếp:</span>
+                <select 
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as SortOption)}
+                  className="bg-transparent text-[9px] md:text-[10px] font-bold uppercase focus:outline-none cursor-pointer"
+                >
+                  <option value="newest">Sản phẩm mới</option>
+                  <option value="price-asc">Giá thấp đến cao</option>
+                  <option value="price-desc">Giá cao đến thấp</option>
+                </select>
+              </div>
             </div>
 
             {loading && products.length === 0 ? (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
-                {[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-3">
+                {[...Array(15)].map((_, i) => <SkeletonCard key={i} />)}
               </div>
-            ) : (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12 md:gap-x-12 md:gap-y-20 fade-in">
+            ) : filteredAndSortedProducts.length > 0 ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-3">
                 {filteredAndSortedProducts.map(product => (
                   <ProductCard key={product.id} product={product} />
                 ))}
+              </div>
+            ) : (
+              <div className="py-20 text-center bg-white rounded-2xl reveal active border border-gray-100">
+                 <p className="text-gray-400 font-bold uppercase tracking-wider text-xs italic">Không tìm thấy sản phẩm nào phù hợp</p>
+                 <button onClick={() => {setActiveCategory('TẤT CẢ'); setSearchQuery('');}} className="mt-6 px-8 py-3 bg-black text-white font-black uppercase text-[10px] tracking-widest hover:bg-[#005596] transition-all rounded-md shadow-lg">Làm mới bộ lọc</button>
               </div>
             )}
           </div>
@@ -196,32 +235,33 @@ const App: React.FC = () => {
         <Benefits />
       </main>
 
-      <footer className="bg-black text-white pt-24 pb-12">
+      <footer className="bg-black text-white pt-20 pb-10">
         <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
             <div className="col-span-1 md:col-span-2">
-              <span className="text-3xl font-black tracking-tighter uppercase mb-8 block">VOVINAMSTORE</span>
-              <p className="text-gray-400 text-sm max-w-md leading-relaxed uppercase tracking-widest font-medium">Đối tác cung cấp trang bị thể thao chuyên nghiệp cho cộng đồng Vovinam Việt Nam.</p>
+              <span className="text-3xl md:text-4xl font-black tracking-tighter uppercase mb-6 block italic">VOVINAMSTORE</span>
+              <p className="text-gray-400 text-xs font-medium leading-relaxed uppercase tracking-widest max-w-sm opacity-60">
+                Nền tảng trang thiết bị thể thao chất lượng cho cộng đồng võ đạo Việt Nam. Đam mê trong từng sợi vải.
+              </p>
             </div>
             <div>
-              <h4 className="text-[11px] font-black uppercase tracking-[0.3em] mb-8 text-white">Chính sách</h4>
-              <ul className="space-y-4 text-gray-500 text-xs font-bold uppercase tracking-widest">
-                <li><a href="#" className="hover:text-white transition-colors">Vận chuyển</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Đổi trả</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Bảo mật</a></li>
-              </ul>
+              <h4 className="text-[10px] font-black uppercase tracking-widest text-white mb-8 border-b border-white/10 pb-2">DỊCH VỤ</h4>
+              <div className="flex flex-col gap-4 text-gray-500 text-[10px] font-bold uppercase tracking-widest">
+                <a href="#" className="hover:text-white transition-colors">Vận chuyển siêu tốc</a>
+                <a href="#" className="hover:text-white transition-colors">Chính sách đổi trả</a>
+                <a href="#" className="hover:text-white transition-colors">Tích điểm thành viên</a>
+              </div>
             </div>
             <div>
-              <h4 className="text-[11px] font-black uppercase tracking-[0.3em] mb-8 text-white">Kết nối</h4>
-              <ul className="space-y-4 text-gray-500 text-xs font-bold uppercase tracking-widest">
-                <li><a href="#" className="hover:text-white transition-colors">Facebook</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Instagram</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Shopee Mall</a></li>
-              </ul>
+              <h4 className="text-[10px] font-black uppercase tracking-widest text-white mb-8 border-b border-white/10 pb-2">FOLLOW US</h4>
+              <div className="flex gap-3">
+                <a href="#" className="w-10 h-10 border border-white/10 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-all text-xs font-bold">FB</a>
+                <a href="#" className="w-10 h-10 border border-white/10 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-all text-xs font-bold">IG</a>
+              </div>
             </div>
           </div>
-          <div className="pt-12 border-t border-white/10 text-center">
-            <p className="text-[9px] text-gray-600 font-black uppercase tracking-[0.5em]">© 2024 VOVINAMSTORE. PHÁT TRIỂN BỞI VOVINAM FANCLUB.</p>
+          <div className="pt-10 border-t border-white/5 text-center">
+            <p className="text-[9px] text-gray-600 font-black uppercase tracking-[0.5em] opacity-40">© 2024 VOVINAMSTORE • POWERED BY FANCLUB</p>
           </div>
         </div>
       </footer>
