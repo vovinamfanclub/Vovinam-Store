@@ -1,5 +1,5 @@
 import React from 'react';
-import { Product } from './constants';
+import { Product } from '../constants';
 
 interface ProductCardProps {
   product: Product;
