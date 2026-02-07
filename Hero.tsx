@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface HeroProps {
   searchQuery: string;
@@ -7,70 +7,95 @@ interface HeroProps {
 }
 
 const Hero: React.FC<HeroProps> = ({ searchQuery, setSearchQuery }) => {
+  const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
+
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const now = new Date();
+      const sixHoursInMs = 6 * 60 * 60 * 1000;
+      // Calculate how many ms have passed in the current 6-hour cycle
+      const timePassedInCycle = now.getTime() % sixHoursInMs;
+      const msLeft = sixHoursInMs - timePassedInCycle;
+
+      const hours = Math.floor((msLeft / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((msLeft / 1000 / 60) % 60);
+      const seconds = Math.floor((msLeft / 1000) % 60);
+
+      return { hours, minutes, seconds };
+    };
+
+    const timer = setInterval(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatNumber = (num: number) => num.toString().padStart(2, '0');
+
   return (
-    <section className="relative h-[90vh] md:h-[95vh] w-full flex items-center overflow-hidden bg-black">
-      {/* Background Media - High Quality Lifestyle */}
-      <div className="absolute inset-0 z-0">
+    <section className="relative h-[85vh] md:h-[90vh] w-full flex items-center justify-center overflow-hidden bg-black">
+      {/* Background Lifestyle Image */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
         <img 
-          src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" 
-          alt="Sports Culture"
-          className="w-full h-full object-cover object-center opacity-70"
+          src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" 
+          alt="Sports Lifestyle"
+          className="w-full h-full object-cover object-center scale-105 animate-slow-zoom opacity-80"
         />
-        {/* Dark Gradient Overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/20 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80"></div>
       </div>
 
-      <div className="container mx-auto px-6 md:px-12 relative z-10 text-left">
-        <div className="max-w-3xl">
-          <span className="inline-block text-white text-[10px] md:text-xs font-black tracking-[0.4em] uppercase mb-6 px-4 py-1.5 border border-white/30 rounded-full backdrop-blur-sm">
-            Vovinam Fanclub Store
+      <div className="container mx-auto px-6 relative z-10 flex flex-col items-center text-center">
+        <div className="max-w-4xl">
+          <span className="inline-block text-white text-[10px] md:text-xs font-black tracking-[0.4em] uppercase mb-8 border border-white/40 px-6 py-2 rounded-full backdrop-blur-md">
+            The Official Vovinam Fanclub Store
           </span>
           
-          <h1 className="text-5xl md:text-9xl font-black text-white mb-8 tracking-tighter leading-[0.9] uppercase italic">
-            CHẠY ĐUA <br/>
-            <span className="text-transparent stroke-text" style={{ WebkitTextStroke: '1px white' }}>VỚI ĐAM MÊ</span>
+          <h1 className="text-6xl md:text-[10rem] font-black text-white mb-2 tracking-tighter leading-[0.8] uppercase italic drop-shadow-2xl">
+            FLASH SALE
           </h1>
-          
-          <p className="text-gray-300 text-sm md:text-xl font-medium mb-10 max-w-lg leading-relaxed uppercase tracking-widest opacity-80">
-            Trang bị chính hãng cho cộng đồng <br/> thể thao Việt Nam.
-          </p>
+          <h2 className="text-2xl md:text-6xl font-medium text-white mb-10 tracking-widest uppercase opacity-90" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.5)', color: 'transparent' }}>
+            TRANG PHỤC THỂ THAO
+          </h2>
 
-          {/* Integrated Modern Search */}
-          <div className="max-w-md relative group mb-10">
-            <div className="relative flex items-center">
-              <input 
-                type="text" 
-                placeholder="Tìm sản phẩm của bạn..." 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-white/10 backdrop-blur-xl border border-white/20 rounded-full px-12 py-4 text-sm font-bold text-white tracking-widest placeholder:text-gray-400 focus:outline-none focus:bg-white focus:text-black transition-all shadow-2xl"
-              />
-              <svg className="w-5 h-5 absolute left-4 text-white group-focus-within:text-black transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-              </svg>
+          {/* Countdown Timer */}
+          <div className="flex flex-col items-center gap-4 mb-12">
+            <span className="text-white text-[10px] md:text-xs font-black tracking-[0.3em] uppercase opacity-80">KẾT THÚC SAU</span>
+            <div className="flex items-center gap-4">
+              <div className="flex flex-col items-center">
+                <div className="bg-black/60 backdrop-blur-md border border-white/10 w-14 h-14 md:w-20 md:h-20 flex items-center justify-center rounded-lg shadow-2xl">
+                  <span className="text-2xl md:text-4xl font-black text-white tabular-nums">{formatNumber(timeLeft.hours)}</span>
+                </div>
+              </div>
+              <span className="text-white text-2xl md:text-4xl font-black animate-pulse">:</span>
+              <div className="flex flex-col items-center">
+                <div className="bg-black/60 backdrop-blur-md border border-white/10 w-14 h-14 md:w-20 md:h-20 flex items-center justify-center rounded-lg shadow-2xl">
+                  <span className="text-2xl md:text-4xl font-black text-white tabular-nums">{formatNumber(timeLeft.minutes)}</span>
+                </div>
+              </div>
+              <span className="text-white text-2xl md:text-4xl font-black animate-pulse">:</span>
+              <div className="flex flex-col items-center">
+                <div className="bg-black/60 backdrop-blur-md border border-white/10 w-14 h-14 md:w-20 md:h-20 flex items-center justify-center rounded-lg shadow-2xl animate-tick">
+                  <span className="text-2xl md:text-4xl font-black text-white tabular-nums">{formatNumber(timeLeft.seconds)}</span>
+                </div>
+              </div>
             </div>
           </div>
           
-          <div className="flex items-center gap-8">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <a 
               href="#catalog"
-              className="px-12 py-5 bg-white text-black font-black text-xs md:text-sm rounded-full transition-all hover:bg-[#EE4D2D] hover:text-white active:scale-95 shadow-2xl uppercase tracking-[0.2em]"
+              className="px-16 py-5 bg-[#0052FF] text-white font-black text-sm md:text-base rounded-full hover:bg-[#0041cc] transition-all transform active:scale-95 shadow-xl uppercase tracking-[0.2em] animate-pulse-blue"
             >
-              Mua ngay
+              MUA NGAY
             </a>
-            <div className="hidden sm:flex items-center gap-3 text-white/50 text-[10px] font-black uppercase tracking-widest">
-              <span className="w-8 h-[1px] bg-white/30"></span>
-              Shopee Mall Verified
-            </div>
           </div>
         </div>
       </div>
-      
-      {/* Visual Decor Elements */}
-      <div className="absolute bottom-12 right-12 hidden lg:block">
-         <div className="text-white/20 text-[120px] font-black tracking-tighter uppercase select-none leading-none rotate-90 origin-bottom-right">
-            PREMIUM
-         </div>
+
+      {/* Visual Indicator */}
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 opacity-40">
+        <div className="w-[1px] h-12 bg-white rounded-full"></div>
       </div>
     </section>
   );
